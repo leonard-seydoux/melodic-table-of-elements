@@ -4,11 +4,11 @@ This script creates as many sounds as elements in the periodic table. Each sound
 
 The sounds are created from a fundamental frequency, and overtones that are multiples of the fundamental frequency. The fundamental frequency f of a given period is obtained from 
 
-    fundemental_frequency = period * f0
+    fundamental_frequency = element_period * f0
 
 where f0 is the lowest fundamental frequency. The overtones are obtained from
 
-    overtone = group * fundemental_frequency
+    overtone = element_group * fundamental_frequency
 
 After sine-wave generation, the sounds are shaped with a Tukey window, and an exponential decay in order to mimick the attack and decay of instruments. The sound is saved as a WAV file, and then converted to an MP3 file using ffmpeg.
 

@@ -4,7 +4,17 @@ This repository is an artistic project that turns the periodic table of elements
 
 ## How to sonify the periodic table of elements
 
-The basic idea is to create a sound that is unique for each element, but that remain nice to the ear when multiple elements are played together. All sounds are created from a multiple of the fundamental frequency. The fundamental frequency of an element is the product of the period and the fundamental frequency. The period is the row in which the element is located, and the fundamental frequency is a constant. The overtone is the product of the group and the fundamental frequency. The sound is a sine wave with the fundamental frequency, and additional sine waves with the overtone frequency. 
+Each sound are made from the different features of the periodic table, like the period or the group (see the script [make_sounds.py](make_sounds.py) for more information). 
+
+The sounds are created from a fundamental frequency, and overtones that are multiples of the fundamental frequency. The fundamental frequency f of a given period is obtained from 
+
+    fundamental_frequency = element_period * f0
+
+where f0 is the lowest fundamental frequency. The overtones are obtained from
+
+    overtone = element_group * fundamental_frequency
+
+After sine-wave generation, the sounds are shaped with a Tukey window, and an exponential decay in order to mimick the attack and decay of instruments. The sound is saved as a WAV file, and then converted to an MP3 file using ffmpeg.
 
 Several overtones are added depending on the block of the element. The d-block elements have one overtone, the f-block elements have two overtones, and the p-block elements have three overtones. The amplitude of the overtones is reduced as the overtone number increases.
 
