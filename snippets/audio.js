@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentlyPlayingSound = null; // Track currently playing sound
 
     function updateButtonText() {
-        enableSoundButton.innerHTML = soundEnabled ? '<i class="fas fa-volume-up"></i><span class="element">Enabled</span>' : '<i class="fas fa-volume-mute"></i><span class="element">Disabled</span>';
+        enableSoundButton.innerHTML = soundEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
     }
 
     // Enable or disable sound

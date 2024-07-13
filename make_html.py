@@ -88,9 +88,6 @@ def stylize_table_html(html):
             elif "button" in line:
                 line = line.replace("<td>", "<td class='button'>")
 
-            elif "title" in line:
-                line = line.replace("<td>", "<td class='title'>")
-
         # Append the line to the new HTML
         new_html += line + "\n"
 
@@ -131,22 +128,22 @@ if __name__ == "__main__":
     # Obtain the main table
     periodic_table = elements.pivot(periodic_table)
 
-    # Add buttons to cell with period 9 and group 1
-    start = 4
-    tokens = ["The", "melodic", "table", "of", "the", "elements"]
-    for index, token in enumerate(tokens):
-        periodic_table.iloc[0, start + index] = (
-            f"<span id='title'>{token[:2].title()}</span><span class='element'>{token.title()}</span>"
-        )
+    # Add a first row before the header
+    periodic_table.loc[-1] = ""
+    periodic_table.index = periodic_table.index + 1
+    periodic_table = periodic_table.sort_index()
+    # periodic_table.iloc[0, 0] = (
+    #     "<span id='title'>The melodic table of elements</span>"
+    # )
 
     # Add buttons to cell with period 9 and group 1
-    periodic_table.iloc[8, 0] = (
+    periodic_table.iloc[0, 0] = (
         "<span id='enable-sound-button'><i class='fa-solid fa-volume-xmark'></i></span>"
     )
 
     # Add link to github page
-    periodic_table.iloc[8, 1] = (
-        "<a href=`github.com` id='github-button'><i class='fa-brands fa-github'></i></a><span class='element'>Github</span>"
+    periodic_table.iloc[0, 1] = (
+        "<a href='https://github.com/leonard-seydoux/melodic-table-of-elements' id='github-button' target='_blank'><i class='fa-brands fa-github'></i></a>"
     )
 
     # Insert the HTML table

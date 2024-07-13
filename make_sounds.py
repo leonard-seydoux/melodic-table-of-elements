@@ -1,4 +1,33 @@
-"""Create the sounds to be played on hover over the element."""
+"""Create the sounds to be played on hover over the element.
+
+This script creates as many sounds as elements in the periodic table. Each
+sound consists in a series of sine waves with different frequencies and
+amplitudes. The basic idea is to create a sound that is unique for each
+element, but that remain nice to the ear when multiple elements are played
+together. 
+
+All sounds are created from a multiple of the fundamental frequency. The fundamental frequency of an element is the product of the period and the fundamental frequency. The period is the row in which the element is located, and the fundamental frequency is a constant. The overtone is the product of the group and the fundamental frequency. The sound is a sine wave with the fundamental frequency, and additional sine waves with the overtone frequency. 
+
+Several overtones are added depending on the block of the element. The d-block elements have one overtone, the f-block elements have two overtones, and the p-block elements have three overtones. The amplitude of the overtones is reduced as the overtone number increases.
+
+Finally, the waveform is shaped with a Tukey window, with an exponential decay to reduce the volume over time. The sound is saved as a WAV file, and then converted to an MP3 file using ffmpeg.
+
+Notes
+-----
+The units of the different parameters are as follows:
+- Frequencies are in Hz.
+- Times are in seconds.
+
+This script requires the following packages:
+- numpy
+- scipy
+- pandas (in elements.py)
+- ffmpeg (to convert the WAV files to MP3)
+"""
+
+FUNDAMENTAL_FREQUENCY = 40
+SAMPLING_RATE = 44100
+SAMPLE_DURATION = 2
 
 import numpy as np
 from scipy.io import wavfile
@@ -21,13 +50,13 @@ for index, element in periodic_table.iterrows():
     group = element["group"]
 
     # Get the sound
-    frequency = period * 40  # Hz
-    overtone = frequency * group  # Hz
-    duration = 2  # seconds
+    fundamental = period * FUNDAMENTAL_FREQUENCY
+    overtone = fundamental * group
+    duration = SAMPLE_DURATION
 
     # Generate the sound
-    t = np.linspace(0, duration, int(44100 * duration), False)
-    note = np.sin(frequency * t * 2 * np.pi)
+    t = np.linspace(0, duration, int(SAMPLING_RATE * duration), False)
+    note = np.sin(fundamental * t * 2 * np.pi)
     if element["block"] == "d-block":
         note += 0.2 * np.sin(overtone * t * 2 * np.pi)
     if element["block"] == "f-block":
