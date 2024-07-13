@@ -9,3 +9,6 @@ __pycache__/*
 
 # Ignore .wav files in subdirectories
 **/*.wav
+
+# Ignore all .png files in all directories
+**/*.png

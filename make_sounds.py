@@ -25,76 +25,111 @@ This script requires the following packages:
 - ffmpeg (to convert the WAV files to MP3)
 """
 
-FUNDAMENTAL_FREQUENCY = 40
-SAMPLING_RATE = 44100
-SAMPLE_DURATION = 2
+FREQUENCY_LOWEST_FUNDAMENTAL_HZ = 40
+FREQUENCY_SAMPLING_HZ = 44100
+SAMPLE_DURATION_SECONDS = 2
+N_SAMPLES = FREQUENCY_SAMPLING_HZ * SAMPLE_DURATION_SECONDS
+SPECTRAL_HARMONIC_DECAY = 0.5, 0.2, 0.1
+ENVELOPE_DECAY_SEC = 0.5
+ENVELOPE_ATTACK_SEC = 0.2
+GENERIC_FILEPATH = "sounds/sound-{}.{}"
+OUTPUT_VOLUME = 0.3
 
+import subprocess
+
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.io import wavfile
 from scipy.signal.windows import tukey
+from tqdm import tqdm
 
 import elements
-import subprocess
 
-# Read the complete periodic table
-periodic_table = elements.read()
-periodic_table = elements.clean(periodic_table)
-periodic_table = elements.move_f_block(periodic_table)
 
-# Iterate over the elements
-for index, element in periodic_table.iterrows():
+def time_vector(duration=SAMPLE_DURATION_SECONDS, samples=N_SAMPLES):
+    """Generate a time vector."""
+    return np.linspace(0, duration, samples, endpoint=False)
 
-    # Get the atomic number
-    atomic_number = element["atomic_number"]
-    period = element["period"]
-    group = element["group"]
 
-    # Get the sound
-    fundamental = period * FUNDAMENTAL_FREQUENCY
-    overtone = fundamental * group
-    duration = SAMPLE_DURATION
+def sine(frequency):
+    """Generate a sine wave with a given frequency."""
+    return np.sin(2 * np.pi * frequency * time_vector())
 
-    # Generate the sound
-    t = np.linspace(0, duration, int(SAMPLING_RATE * duration), False)
-    note = np.sin(fundamental * t * 2 * np.pi)
-    if element["block"] == "d-block":
-        note += 0.2 * np.sin(overtone * t * 2 * np.pi)
-    if element["block"] == "f-block":
-        note += 0.1 * np.sin(overtone * t * 2 * np.pi)
-        note += 0.05 * np.sin(2 * overtone * t * 2 * np.pi)
-    if element["block"] == "p-block":
-        note += 0.1 * np.sin(overtone * t * 2 * np.pi)
-        note += 0.05 * np.sin(2 * overtone * t * 2 * np.pi)
-        note += 0.001 * np.sin(3 * overtone * t * 2 * np.pi)
 
-    # Exponential decay
-    decay = np.exp(-t / 0.5)
-    note = note * decay
+def exponential_decay(tau=ENVELOPE_DECAY_SEC):
+    """Generate an exponential decay."""
+    return np.exp(-time_vector() / tau)
 
-    # Reduce the volume
-    note = note / np.abs(note.max()) * 0.1
-    note = note * tukey(len(note), 0.1)
 
-    # Save the sound
-    filename_wav = f"sounds/sound-{atomic_number}.wav"
-    filename_mp3 = f"sounds/sound-{atomic_number}.mp3"
-    wavfile.write(filename_wav, 44100, note)
+def window(tau=ENVELOPE_ATTACK_SEC):
+    """Apply a window to the signal."""
+    return tukey(len(time_vector()), tau)
 
-    # Convert WAV to MP3 using ffmpeg
-    subprocess.run(
-        [
-            "ffmpeg",
-            "-y",  # Allow overwrite
-            "-i",
-            filename_wav,
-            "-codec:a",
-            "libmp3lame",
-            "-qscale:a",
-            "2",
-            "-v",
-            "0",  # Disable verbose output
-            "-af",
-            "volume=0.1",
-            filename_mp3,
-        ]
-    )
+
+def main():
+
+    # Read the complete periodic table
+    periodic_table = elements.read()
+    periodic_table = elements.clean(periodic_table)
+    periodic_table = elements.move_f_block(periodic_table)
+
+    # Iterate over the elements
+    for _, element in tqdm(
+        periodic_table.iterrows(),
+        total=len(periodic_table),
+        desc="Creating sounds",
+    ):
+        # Rest of the code
+
+        # Get the atomic number
+        atomic_number = element["atomic_number"]
+        group = element["group"]
+
+        # Generate fundamental sound
+        fundamental = element["period"] * FREQUENCY_LOWEST_FUNDAMENTAL_HZ
+        note = sine(fundamental)
+
+        # Add overtones
+        overtone = fundamental * group
+        if element["block"] == "d-block":
+            note += SPECTRAL_HARMONIC_DECAY[0] * sine(overtone)
+        if element["block"] == "f-block":
+            for i in range(2):
+                note += SPECTRAL_HARMONIC_DECAY[i] * sine((i + 1) * overtone)
+        if element["block"] == "p-block":
+            for i in range(3):
+                note += SPECTRAL_HARMONIC_DECAY[i] * sine((i + 1) * overtone)
+
+        # Exponential decay
+        note *= exponential_decay()
+        note *= window()
+        note *= OUTPUT_VOLUME
+
+        # Save the sound in wav and mp3 format
+        filename_wav = GENERIC_FILEPATH.format(atomic_number, "wav")
+        filename_mp3 = GENERIC_FILEPATH.format(atomic_number, "mp3")
+        wavfile.write(filename_wav, FREQUENCY_SAMPLING_HZ, note)
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                filename_wav,
+                "-codec:a",
+                "libmp3lame",
+                "-qscale:a",
+                "1",
+                "-v",
+                "0",
+                "-af",
+                f"volume={OUTPUT_VOLUME}",
+                filename_mp3,
+            ]
+        )
+
+        # Delete the WAV file
+        subprocess.run(["rm", filename_wav])
+
+
+if __name__ == "__main__":
+    main()

@@ -46,7 +46,22 @@ td {
     border-radius: 3px;
     background-color: var(--background-color-cell-standby);
     transform: scale(1, 1);
-    transition: background-color var(--transition-time-out) ease-in-out, border-color var(--transition-time-out) ease-in-out, color var(--transition-time-out) ease-in-out, transform var(--transition-time-out) ease-in-out;
+    transition: background-color var(--transition-time-out) ease-in-out, 
+                border-color var(--transition-time-out) ease-in-out, 
+                color var(--transition-time-out) ease-in-out, 
+                transform var(--transition-time-out) ease-in-out;
+    -webkit-transition: background-color var(--transition-time-out) ease-in-out, 
+                        border-color var(--transition-time-out) ease-in-out, 
+                        color var(--transition-time-out) ease-in-out, 
+                        transform var(--transition-time-out) ease-in-out;
+    -moz-transition: background-color var(--transition-time-out) ease-in-out, 
+                     border-color var(--transition-time-out) ease-in-out, 
+                     color var(--transition-time-out) ease-in-out, 
+                     transform var(--transition-time-out) ease-in-out;
+    -o-transition: background-color var(--transition-time-out) ease-in-out, 
+                   border-color var(--transition-time-out) ease-in-out, 
+                   color var(--transition-time-out) ease-in-out, 
+                   transform var(--transition-time-out) ease-in-out;
 }
 
 /* td:empty {
@@ -59,6 +74,9 @@ td:not(:empty):hover {
     border-color: var(--border-color-hover);
     color: white;
     transform: scale(1.1, 1.1);
+    -webkit-transition: background-color var(--transition-time-in) ease-in-out, border-color var(--transition-time-in) ease-in-out, color var(--transition-time-in) ease-in-out, transform var(--transition-time-in) ease-in-out;
+    -moz-transition: background-color var(--transition-time-in) ease-in-out, border-color var(--transition-time-in) ease-in-out, color var(--transition-time-in) ease-in-out, transform var(--transition-time-in) ease-in-out;
+    -o-transition: background-color var(--transition-time-in) ease-in-out, border-color var(--transition-time-in) ease-in-out, color var(--transition-time-in) ease-in-out, transform var(--transition-time-in) ease-in-out;
     transition: background-color var(--transition-time-in) ease-in-out, border-color var(--transition-time-in) ease-in-out, color var(--transition-time-in) ease-in-out, transform var(--transition-time-in) ease-in-out;
 }
 
@@ -129,7 +147,6 @@ td:hover .number, td:hover .weight, td:hover .element {
 .button {
     background-color: var(--background-color-cell-standby);
     color: var(--font-color-buttons);
-    /* transition: background-color var(--transition-time-in) ease-in-out, border-color var(--transition-time-in) ease-in-out, color var(--transition-time-in) ease-in-out, transform var(--transition-time-in) ease-in-out; */
 }
 
 .button .element {
