@@ -16,12 +16,17 @@
 }   
 
 body {
-    width: 60%;
+    width: 80%;
     padding-left: 10%;
-    text-align: center;
     font-family: 'Roboto Condensed', sans-serif;
     background-color: var(--background-color);
     color: var(--font-color-buttons);
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: 300;
+    padding-left: 20px;
 }
 
 table {
@@ -141,17 +146,4 @@ td:hover .number, td:hover .weight, td:hover .element {
     /* color: var(--border-color-hover); */
     color: inherit;
     text-decoration: none;
-}
-
-/* .button:hover {
-    background-color: var(--font-color-buttons);
-} */
-
-.title {
-    color: var(--font-color-buttons);
-    background-color: var(--background-color-cell-standby);
-}
-
-.title .element {
-    opacity: 1;
 }
