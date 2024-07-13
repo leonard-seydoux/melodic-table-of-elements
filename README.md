@@ -1,5 +1,12 @@
 # The interactive periodic table of elements
 
+[![License](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Website](https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fleonard-seydoux.github.io%2Fmelodic-table-of-elements%2F)](https://leonard-seydoux.github.io/melodic-table-of-elements/)
+[![GitHub last commit](https://img.shields.io/github/last-commit/leonard-seydoux/melodic-table-of-elements)]()
+[![GitHub contributors](https://img.shields.io/github/contributors/leonard-seydoux/melodic-table-of-elements)]()
+![GitHub repo size](https://img.shields.io/github/repo-size/leonard-seydoux/melodic-table-of-elements)
+
+
 This repository is an artistic project that turns the periodic table of elements into an interactive musical instrument. No description needed, just try it at https://leonard-seydoux.github.io/melodic-table-of-elements/. The project aims at evolving, so feel free to contribute! 
 
 ## How to sonify the periodic table of elements
