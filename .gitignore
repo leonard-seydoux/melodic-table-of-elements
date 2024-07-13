@@ -12,3 +12,6 @@ __pycache__/*
 
 # Ignore all .png files in all directories
 **/*.png
+
+# Ignore mac specific files in all directories
+**/.DS_Store
