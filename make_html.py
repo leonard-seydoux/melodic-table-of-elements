@@ -137,13 +137,13 @@ if __name__ == "__main__":
     # )
 
     # Add buttons to cell with period 9 and group 1
-    periodic_table.iloc[0, 1] = (
+    periodic_table.iloc[0, 0] = (
         "<span id='enable-sound-button'><i class='fa-solid fa-volume-xmark'></i></span>"
     )
 
     # Add link to github page
-    periodic_table.iloc[0, 2] = (
-        "<a href=`github.com` id='github-button'><i class='fa-brands fa-github'></i></a>"
+    periodic_table.iloc[0, 1] = (
+        "<a href='https://github.com/leonard-seydoux/melodic-table-of-elements' id='github-button' target='_blank'><i class='fa-brands fa-github'></i></a>"
     )
 
     # Insert the HTML table
