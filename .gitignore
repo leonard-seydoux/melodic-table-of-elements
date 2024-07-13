@@ -1,5 +1,8 @@
-# Ignore __pycache__ directories
+# Ignore all python stuff
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
 
 # Ignore .wav files in subdirectories
 **/*.wav
