@@ -1,6 +1,6 @@
 # The interactive periodic table of elements
 
-This repository is an artistic project that turns the periodic table of elements into an interactive musical instrument. No description needed, just try it at https://leonard-seydoux.github.io/melodic-table-of-the-elements/. The project aims at evolving, so feel free to contribute! 
+This repository is an artistic project that turns the periodic table of elements into an interactive musical instrument. No description needed, just try it at https://leonard-seydoux.github.io/melodic-table-of-elements/. The project aims at evolving, so feel free to contribute! 
 
 ## How to sonify the periodic table of elements
 
