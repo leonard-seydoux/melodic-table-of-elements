@@ -1,12 +1,16 @@
 """Create the sounds to be played on hover over the element.
 
-This script creates as many sounds as elements in the periodic table. Each
-sound consists in a series of sine waves with different frequencies and
-amplitudes. The basic idea is to create a sound that is unique for each
-element, but that remain nice to the ear when multiple elements are played
-together. 
+This script creates as many sounds as elements in the periodic table. Each sound are made from the different features of the periodic table, like the period or the group. 
 
-All sounds are created from a multiple of the fundamental frequency. The fundamental frequency of an element is the product of the period and the fundamental frequency. The period is the row in which the element is located, and the fundamental frequency is a constant. The overtone is the product of the group and the fundamental frequency. The sound is a sine wave with the fundamental frequency, and additional sine waves with the overtone frequency. 
+The sounds are created from a fundamental frequency, and overtones that are multiples of the fundamental frequency. The fundamental frequency f of a given period is obtained from 
+
+    fundemental_frequency = period * f0
+
+where f0 is the lowest fundamental frequency. The overtones are obtained from
+
+    overtone = group * fundemental_frequency
+
+After sine-wave generation, the sounds are shaped with a Tukey window, and an exponential decay in order to mimick the attack and decay of instruments. The sound is saved as a WAV file, and then converted to an MP3 file using ffmpeg.
 
 Several overtones are added depending on the block of the element. The d-block elements have one overtone, the f-block elements have two overtones, and the p-block elements have three overtones. The amplitude of the overtones is reduced as the overtone number increases.
 
@@ -30,14 +34,22 @@ FREQUENCY_SAMPLING_HZ = 44100
 SAMPLE_DURATION_SECONDS = 2
 N_SAMPLES = FREQUENCY_SAMPLING_HZ * SAMPLE_DURATION_SECONDS
 SPECTRAL_HARMONIC_DECAY = 0.5, 0.2, 0.1
+NUMBER_OF_OVERTONES = {
+    "s-block": 0,
+    "d-block": 1,
+    "f-block": 2,
+    "p-block": 3,
+}
 ENVELOPE_DECAY_SEC = 0.5
 ENVELOPE_ATTACK_SEC = 0.2
 GENERIC_FILEPATH = "sounds/sound-{}.{}"
-OUTPUT_VOLUME = 0.3
+OUTPUT_VOLUME = 0.25
+FFMGED_COMMAND = (
+    "ffmpeg -y -i {} -codec:a libmp3lame -qscale:a 1 -v 0 -af volume={} {}"
+)
 
 import subprocess
 
-import matplotlib.pyplot as plt
 import numpy as np
 from scipy.io import wavfile
 from scipy.signal.windows import tukey
@@ -70,8 +82,6 @@ def main():
 
     # Read the complete periodic table
     periodic_table = elements.read()
-    periodic_table = elements.clean(periodic_table)
-    periodic_table = elements.move_f_block(periodic_table)
 
     # Iterate over the elements
     for _, element in tqdm(
@@ -79,25 +89,14 @@ def main():
         total=len(periodic_table),
         desc="Creating sounds",
     ):
-        # Rest of the code
-
-        # Get the atomic number
-        atomic_number = element["atomic_number"]
-        group = element["group"]
-
         # Generate fundamental sound
         fundamental = element["period"] * FREQUENCY_LOWEST_FUNDAMENTAL_HZ
         note = sine(fundamental)
 
         # Add overtones
-        overtone = fundamental * group
-        if element["block"] == "d-block":
-            note += SPECTRAL_HARMONIC_DECAY[0] * sine(overtone)
-        if element["block"] == "f-block":
-            for i in range(2):
-                note += SPECTRAL_HARMONIC_DECAY[i] * sine((i + 1) * overtone)
-        if element["block"] == "p-block":
-            for i in range(3):
+        overtone = fundamental * element["group"]
+        for block in NUMBER_OF_OVERTONES.keys():
+            for i in range(NUMBER_OF_OVERTONES[block]):
                 note += SPECTRAL_HARMONIC_DECAY[i] * sine((i + 1) * overtone)
 
         # Exponential decay
@@ -106,26 +105,13 @@ def main():
         note *= OUTPUT_VOLUME
 
         # Save the sound in wav and mp3 format
-        filename_wav = GENERIC_FILEPATH.format(atomic_number, "wav")
-        filename_mp3 = GENERIC_FILEPATH.format(atomic_number, "mp3")
+        filename_wav = GENERIC_FILEPATH.format(element["atomic_number"], "wav")
+        filename_mp3 = GENERIC_FILEPATH.format(element["atomic_number"], "mp3")
         wavfile.write(filename_wav, FREQUENCY_SAMPLING_HZ, note)
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-y",
-                "-i",
-                filename_wav,
-                "-codec:a",
-                "libmp3lame",
-                "-qscale:a",
-                "1",
-                "-v",
-                "0",
-                "-af",
-                f"volume={OUTPUT_VOLUME}",
-                filename_mp3,
-            ]
+        convert_command = FFMGED_COMMAND.format(
+            filename_wav, OUTPUT_VOLUME, filename_mp3
         )
+        subprocess.run(convert_command, shell=True)
 
         # Delete the WAV file
         subprocess.run(["rm", filename_wav])

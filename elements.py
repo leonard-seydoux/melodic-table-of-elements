@@ -31,7 +31,10 @@ def read(filepath=FILEPATH, **kwargs):
         The periodic table of elements.
     """
     kwargs.setdefault("delimiter", ",")
-    return pd.read_csv(filepath, **kwargs)
+    elements = pd.read_csv(filepath, **kwargs)
+    elements = clean(elements)
+    elements = move_f_block(elements)
+    return elements
 
 
 def clean(elements):

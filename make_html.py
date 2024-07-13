@@ -119,8 +119,6 @@ if __name__ == "__main__":
 
     # Read the complete periodic table
     periodic_table = elements.read()
-    periodic_table = elements.clean(periodic_table)
-    periodic_table = elements.move_f_block(periodic_table)
 
     # Create cell
     periodic_table.insert(0, "cell", periodic_table.apply(create_cell, axis=1))
@@ -132,16 +130,11 @@ if __name__ == "__main__":
     periodic_table.loc[-1] = ""
     periodic_table.index = periodic_table.index + 1
     periodic_table = periodic_table.sort_index()
-    # periodic_table.iloc[0, 0] = (
-    #     "<span id='title'>The melodic table of elements</span>"
-    # )
 
-    # Add buttons to cell with period 9 and group 1
+    # Add buttons to cell in top left corner
     periodic_table.iloc[0, 0] = (
         "<span id='enable-sound-button'><i class='fa-solid fa-volume-xmark'></i></span>"
     )
-
-    # Add link to github page
     periodic_table.iloc[0, 1] = (
         "<a href='https://github.com/leonard-seydoux/melodic-table-of-elements' id='github-button' target='_blank'><i class='fa-brands fa-github'></i></a>"
     )
