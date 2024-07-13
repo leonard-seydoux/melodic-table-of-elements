@@ -3,7 +3,7 @@
 import pandas as pd
 
 
-FILEPATH = "complete-periodic-table.csv"
+FILEPATH = "data/periodic-table.csv"
 COLUMNS_TO_KEEP = [
     "symbol",
     "period",
